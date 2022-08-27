@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jul  6 02:52:43 2022
+Created on Sat Aug 27 12:39:31 2022
 
-@author: pc2
+@author: a_esfahani
 """
 
 from selenium import webdriver
@@ -11,14 +11,17 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 from time import sleep
 # import unittest
 # import HTMLTestRunner
 
-driver = webdriver.Chrome(executable_path=r"E:\chrome driver\New folder\chromedriver.exe")
+ser = Service(r"chromedriver.exe")
+driver = webdriver.Chrome(service=ser)
 
 # Open Namava
 driver.get("https://www.namava.ir/")
+
 
 # Click ورود/ ثبت نام
 driver.find_element(By.LINK_TEXT,"ورود/ ثبت نام").click()
@@ -28,31 +31,43 @@ sleep(10)
 driver.find_element(By.LINK_TEXT,"ثبت نام").click()
 sleep(4)
 
-# # Page:register with phone number
-# inputPhoneNumberList = [1, 8799, 9877698756897695]
+# Page:register with phone number
+inputPhoneNumberList = [1, 8799, 9877698756897695, 9981511810]
 
-# # False input
-# for i in range(len(inputPhoneNumberList)):
-#     phoneNumber = driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[1]/div[2]/div/div/input")
-#     phoneNumber.send_keys(inputPhoneNumberList[i])
-#     sleep(3)
-#     driver.find_element(By.ID,"register-phone-request").click()
-#     sleep(3)
-#     driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[4]/div[3]/div[3]/div[3]").click()
-#     sleep(3)
-#     phoneNumber.clear()
-#     sleep(2)
+# False input
+for i in range(len(inputPhoneNumberList)):
+    phoneNumber = driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[1]/div[2]/div/div/input")
+    phoneNumber.send_keys(inputPhoneNumberList[i])
+    sleep(3)
+    # Click ثبت نام
+    driver.find_element(By.ID,"register-phone-request").click()
+    sleep(3)
     
-# True input
-driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[1]/div[2]/div/div/input").send_keys("09981511810")
-sleep(3)
-# Click register button
-driver.find_element(By.ID,"register-phone-request").click() 
-sleep(3)
+    # Check if number is true exit from loop
+    if inputPhoneNumberList[i] == 9981511810:        
+        wait = WebDriverWait(driver, 10)
+        wait.until(EC.presence_of_element_located((By.ID, "register-phone-verify")))
+        break
+    
+    # Click اصلاح شماره
+    driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[4]/div[3]/div[3]/div[3]").click()
+    sleep(3)
 
-# Click register button without any code
-driver.find_element(By.ID,"register-phone-verify").click() 
-sleep(3)
+    phoneNumber.clear()
+    sleep(2)
+    
+    
+    
+# # True input
+# driver.find_element(By.XPATH,"//*[@id='root']/div/div/div[2]/div[1]/div[2]/div/div/input").send_keys("09981511810")
+# sleep(3)
+# # Click register button
+# driver.find_element(By.ID,"register-phone-request").click() 
+# sleep(3)
+
+# # Click register button without any code
+# driver.find_element(By.ID,"register-phone-verify").click() 
+# sleep(3)
 
 
 # # Click register button with wrong code
@@ -100,6 +115,8 @@ for g in range(len(nameList)):
 
     driver.find_element(By.ID,"register-phone-finalize").click()
     sleep(5)
+
+
     
     # # clear All
     # name.clear()
